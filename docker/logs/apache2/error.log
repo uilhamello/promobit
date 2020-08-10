@@ -352,3 +352,6 @@ AH00558: apache2: Could not reliably determine the server's fully qualified doma
 [Sun Aug 09 04:58:52.766078 2020] [php7:notice] [pid 21] [client 172.18.0.1:34322] [debug] Notified event "kernel.finish_request" to listener "Symfony\\Component\\HttpKernel\\EventListener\\LocaleAwareListener::onKernelFinishRequest".\n
 [Sun Aug 09 05:26:26.750462 2020] [core:notice] [pid 1] AH00052: child pid 1380 exit signal Interrupt (2)
 [Sun Aug 09 06:46:03.119965 2020] [core:notice] [pid 1] AH00052: child pid 2019 exit signal Interrupt (2)
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.18.0.4. Set the 'ServerName' directive globally to suppress this message
+[Mon Aug 10 03:50:29.081780 2020] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.38 (Debian) PHP/7.4.2 configured -- resuming normal operations
+[Mon Aug 10 03:50:29.081811 2020] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
