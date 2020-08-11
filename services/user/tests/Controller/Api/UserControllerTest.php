@@ -2,12 +2,45 @@
 
 namespace App\Tests\Controller\Api;
 
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class UserControllerTest extends TestCase
+class UserControllerTest extends WebTestCase
 {
-    public function testSomething()
+
+    public function restStructure(string $url, array $data)
     {
-        $this->assertTrue(true);
+        $client = static::createClient();
+        $client->request(
+            'POST',
+            '/api/user/register',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_REFERER' => '',
+            ],
+            json_encode($data)
+        );
+    }
+
+    public function testUserControllerApiRegister()
+    {
+        $this->restStructure('/api/user/register', ['email' => 'testUserControllerApiRegisterEmail', 'password' => 'testUserControllerApiRegisterPassword']);
+
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testUserControllerApiRegisterWithEmailEmpty()
+    {
+        $this->restStructure('/api/user/register', ['email' => '', 'password' => 'testUserControllerApiRegisterPassword']);
+
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testUserControllerApiRegisterWithPasswordEmpty()
+    {
+        $this->restStructure('/api/user/register', ['email' => 'testUserControllerApiRegisterEmail', '' => '']);
+
+        $this->assertResponseIsSuccessful();
     }
 }

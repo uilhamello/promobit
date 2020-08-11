@@ -6,6 +6,8 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpParser\Node\Expr\Cast\Array_;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,11 +22,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 {
 
     private $manager;
+    private $passwordEncoder;
 
-    public function __construct(ManagerRegistry $registry, EntityManagerInterface $manager)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $manager, UserPasswordEncoderInterface $passwordEncoder)
     {
         parent::__construct($registry, User::class);
         $this->manager = $manager;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     /**
@@ -41,16 +45,29 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function createUser(string $email, string $password)
+    public function createUser(string $email, string $password): array
     {
         $newUser = new User();
 
-        $newUser
-            ->setEmail($email)
-            ->setPassword($password);
+        if (is_null($email) || is_null($password)) {
+            return ['status' => 'empty', 'data' => $userExisted, 'message' => 'Data can not be empty'];
+        }
+
+        if ($userExisted = $this->FindUserByEmail($email)) {
+            return ['status' => 'already_exist', 'data' => $userExisted, 'message' => 'email already exist'];
+        }
+
+        $newUser->setPassword($this->passwordEncoder->encodePassword(
+            $newUser,
+            $password
+        ));
+
+        $newUser->setEmail($email);
 
         $this->manager->persist($newUser);
         $this->manager->flush();
+
+        return ['status' => 'success', 'data' => $newUser, 'message' => 'has successful created'];
     }
 
     public function removeUser(User $user)
@@ -59,9 +76,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->manager->flush();
     }
 
-    public function FindUserByEmail(string $email): User
+    public function FindUserByEmail(string $email)
     {
-        $user = new User();
         return $this->findOneBy(['email' => $email]);
     }
 }

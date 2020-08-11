@@ -4,6 +4,7 @@ namespace App\Tests\Repository;
 
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserRepositoryTest extends KernelTestCase
 {
@@ -21,7 +22,7 @@ class UserRepositoryTest extends KernelTestCase
     {
         self::bootKernel();
         $this->setters();
-        self::$container->get(UserRepository::class)->createUser($this->email, $this->password);
+        return self::$container->get(UserRepository::class)->createUser($this->email, $this->password)['data'];
     }
 
     public function removeUserMock()
