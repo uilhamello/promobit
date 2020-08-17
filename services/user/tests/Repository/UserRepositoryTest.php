@@ -28,9 +28,7 @@ class UserRepositoryTest extends KernelTestCase
     public function removeUserMock()
     {
         self::bootKernel();
-        $userCreated = self::$container->get(UserRepository::class)->findOneBy(['email' => $this->email]);
-        $this->assertEquals($this->email, $userCreated->getEmail());
-        self::$container->get(UserRepository::class)->removeUser($userCreated);
+        self::$container->get(UserRepository::class)->removeUser($this->email);
     }
 
     public function testUserRepositoryCreateUser()
@@ -42,6 +40,26 @@ class UserRepositoryTest extends KernelTestCase
         echo "Assert Equals Email: " . $this->email . " " . $userCreated->getEmail();
         $this->assertEquals($this->email, $userCreated->getEmail());
         $this->assertNull($this->removeUserMock());
+    }
+
+
+    public function testUserRepositoryUpdateUser()
+    {
+        self::bootKernel();
+        $this->setters();
+        $user = $this->createUserMock();
+        $newEmail = $this->email . 'updated';
+        $newPassword = $this->password . 'updated';
+
+        $userCreated = self::$container->get(UserRepository::class)->updateUser(['email' => $this->email, 'new' => ['email' => $newEmail, 'password' => $newPassword]]);
+
+        $this->assertEquals($userCreated['status'], 'success');
+
+        $this->assertNotEquals($this->email, $userCreated['data']->getEmail());
+        $realEmail = $this->email;
+        $this->email = $newEmail;
+        $this->assertNull($this->removeUserMock());
+        $this->email = $realEmail;
     }
 
     public function testUserRepositoryFindUserByEmail()

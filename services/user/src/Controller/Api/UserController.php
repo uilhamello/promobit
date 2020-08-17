@@ -45,4 +45,40 @@ class UserController extends AbstractController
 
         return new JsonResponse(['status' => 'success', 'message' => 'user created'], Response::HTTP_CREATED);
     }
+
+    /**
+     * @Route("/api/user/remove", name="remove", methods={"POST"})
+     */
+    public function remove(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (empty($data['email'])) {
+            return new JsonResponse(['status' => 'error', 'message' => 'email is empty'], Response::HTTP_ACCEPTED);
+        }
+
+        $removed = $this->userRepository->removeUser($data['email']);
+        if ($removed['status'] == 'email_not_exit')
+            return new JsonResponse(['status' => 'error', 'message' => 'user not exit'], Response::HTTP_CREATED);
+
+        return new JsonResponse(['status' => 'success', 'message' => 'User was removed'], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/api/user/update", name="update", methods={"POST"})
+     */
+    public function update(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (empty($data['email'])) {
+            return new JsonResponse(['status' => 'error', 'message' => 'email is empty'], Response::HTTP_ACCEPTED);
+        }
+
+        $removed = $this->userRepository->updateUser($data['email']);
+        if ($removed['status'] == 'email_not_exit')
+            return new JsonResponse(['status' => 'error', 'message' => 'user not exit'], Response::HTTP_CREATED);
+
+        return new JsonResponse(['status' => 'success', 'message' => 'User was updated'], Response::HTTP_CREATED);
+    }
 }

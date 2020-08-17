@@ -1,5 +1,32 @@
 <?php
 
+$original = array("A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3");
+
+$writeArray = array();
+$count = 1;
+foreach($) {
+    $root = substr($value, 0, strlen($count));
+    if(in_array($root.$count, $original)){
+        $writeArray[$count-1] = $root.$count;
+        $count++;
+    }else{
+        $count=0;
+    }
+}
+
+$writeArray[] = ($value[$key]); 
+
+array_walk($original, 'name', $writeArray);
+
+
+//$at = array_multisort($original, SORT_ASC, SORT_STRING);
+
+array_map(function ($a) {
+}, $original);
+
+print_r($original);
+die();
+
 use App\Kernel;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;

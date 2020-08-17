@@ -49,8 +49,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $newUser = new User();
 
-        if (is_null($email) || is_null($password)) {
-            return ['status' => 'empty', 'data' => $userExisted, 'message' => 'Data can not be empty'];
+        if (empty($email) || empty($password)) {
+            return ['status' => 'empty', 'data' => $password, 'message' => 'Data can not be empty'];
         }
 
         if ($userExisted = $this->FindUserByEmail($email)) {
@@ -70,10 +70,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return ['status' => 'success', 'data' => $newUser, 'message' => 'has successful created'];
     }
 
-    public function removeUser(User $user)
+    public function removeUser(string $email)
     {
-        $this->manager->remove($user);
+        if (empty($email)) {
+            return ['status' => 'empty', 'data' => $email, 'message' => 'Email is empty'];
+        }
+
+        if (!$userExisted = $this->FindUserByEmail($email)) {
+            return ['status' => 'email_not_exit', 'message' => 'email not exit'];
+        }
+
+        $this->manager->remove($userExisted);
         $this->manager->flush();
+        return ['status' => 'success', 'message' => 'user has been removed'];
+    }
+
+    public function updateUser(array $data)
+    {
+        if (empty($data['email'])) {
+            return ['status' => 'empty', 'data' => $data, 'message' => 'Email is empty'];
+        }
+
+        if (!$userExisted = $this->FindUserByEmail($data['email'])) {
+            return ['status' => 'email_not_exit', 'message' => 'email not exit'];
+        }
+
+        $userExisted->setPassword($this->passwordEncoder->encodePassword(
+            $userExisted,
+            $data['new']['password']
+        ));
+        $userExisted->setEmail($data['new']['email']);
+        $this->_em->persist($userExisted);
+        $this->_em->flush();
+
+        return ['status' => 'success', 'data' => $userExisted, 'message' => 'user has been updated'];
     }
 
     public function FindUserByEmail(string $email)

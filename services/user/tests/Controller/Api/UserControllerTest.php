@@ -12,7 +12,7 @@ class UserControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request(
             'POST',
-            '/api/user/register',
+            $url,
             [],
             [],
             [
@@ -40,7 +40,18 @@ class UserControllerTest extends WebTestCase
     public function testUserControllerApiRegisterWithPasswordEmpty()
     {
         $this->restStructure('/api/user/register', ['email' => 'testUserControllerApiRegisterEmail', '' => '']);
-
         $this->assertResponseIsSuccessful();
     }
+
+    public function testUserControllerApiRegisterRemoveUser()
+    {
+        $this->restStructure('/api/user/remove', ['email' => 'tsestUserControllerApiRegisterEmail']);
+        $this->assertResponseIsSuccessful();
+    }
+
+    // public function testUserControllerApiRegisterRemoveUser()
+    // {
+    //     $this->restStructure('/api/user/upate', ['email' => $this->email, 'new' => ['email' => $newEmail, 'password' => $newPassword]]);
+    //     $this->assertResponseIsSuccessful();
+    // }
 }
