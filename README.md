@@ -1,4 +1,5 @@
 # promobit
+![alt text](https://github.com/uilhamello/promobit/blob/master/arc.jpg?raw=true)
 
 1. Clone the project:
    git clone git@github.com:uilhamello/promobit.git
